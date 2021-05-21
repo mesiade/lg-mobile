@@ -1,5 +1,9 @@
 <template>
-  <div class="course-header">CourseHeader</div>
+  <div class="course-header">
+    <van-image
+      :src="require('@/assets/logo.png')"
+    ></van-image>
+  </div>
 </template>
 
 <script>
@@ -8,4 +12,14 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped></style>
+<style lang='scss' scoped>
+.course-header {
+  height: 50px;
+}
+
+.van-image {
+  width: 180px;
+  margin-left: -20px;
+}
+
+</style>
