@@ -6,14 +6,20 @@
         <img :src="item.img" alt="">
       </van-swipe-item>
     </van-swipe>
+    <!-- 课程列表 -->
+    <course-content-list></course-content-list>
   </div>
 </template>
 
 <script>
 import { getAllAds } from '@/services/course'
+import CourseContentList from './CourseContentList'
 
 export default {
   name: 'CourseContent',
+  components: {
+    CourseContentList
+  },
   data () {
     return {
       // 轮播图片列表
@@ -29,7 +35,6 @@ export default {
         // 999代表首页顶部轮播图广告位
         spaceKeys: '999'
       })
-      console.log(data)
       // 存储到 adList
       this.adList = data.content[0].adDTOList
     }
