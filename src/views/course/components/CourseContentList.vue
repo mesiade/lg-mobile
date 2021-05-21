@@ -12,20 +12,39 @@
 </template>
 
 <script>
+import { getQueryCourses } from '@/services/course'
+
 export default {
   name: 'CourseContentList',
   data () {
     return {
-      list: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      list: [],
       // 是否正在加载
       loading: false,
       // 是否加载完毕
-      finished: false
+      finished: false,
+      // 数据页数
+      currentPage: 1
     }
   },
   methods: {
-    onLoad () {
-      console.log('111')
+    async onLoad () {
+      const { data } = await getQueryCourses({
+        currentPage: this.currentPage,
+        pageSize: 10,
+        // 代表上架状态
+        status: 1
+      })
+
+      // 下次请求下一页
+      this.currentPage++
+      // 加载状态结束
+      this.loading = false
+
+      // 数据全部加载完成
+      if (data.data.records.length < 10) {
+        this.finished = true
+      }
     }
   }
 }
