@@ -13,7 +13,7 @@ export const getAllAds = params => {
 export const getQueryCourses = data => {
   return request({
     method: 'POST',
-    url: '/boss/course/gerQueryCourses',
+    url: '/boss/course/getQueryCourses',
     data
   })
 }

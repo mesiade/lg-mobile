@@ -6,7 +6,23 @@
       finished-text="没有更多了"
       @load="onLoad"
     >
-      <van-cell v-for="item in list" :key="item" :title="item" />
+      <van-cell
+        v-for="item in list"
+        :key="item.id">
+        <!-- 课程左侧图片 -->
+        <div>
+          <img :src="item.courseImgUrl" alt="">
+        </div>
+        <!-- 课程右侧信息 -->
+        <div class="course-info">
+          <h3 v-text="item.courseName"></h3>
+          <p class="curse-preview" v-html="item.previewFirstField"></p>
+          <p class="curse-container">
+            <span class="curse-discounts">￥{{ item.discounts }}</span>
+            <s class="curse-price">￥{{ item.price }}</s>
+          </p>
+        </div>
+      </van-cell>
     </van-list>
   </div>
 </template>
@@ -35,7 +51,7 @@ export default {
         // 代表上架状态
         status: 1
       })
-
+      this.list.push(...data.data.records)
       // 下次请求下一页
       this.currentPage++
       // 加载状态结束
@@ -51,6 +67,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// 列表组件的固定滚动
 .course-content-list {
   position: fixed;
   overflow-y: auto;
@@ -59,4 +76,38 @@ export default {
   left: 0;
   right: 0;
 }
+
+// 课程列表项的样式
+.van-cell__value {
+  display: flex;
+  height: 100px;
+  padding: 10px 0;
+
+  img {
+    height: 100%;
+    width: 75px;
+    border-radius: 5px;
+  }
+
+  .course-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+
+    .curse-preview {
+      flex-grow: 1;
+    }
+
+    .curse-discounts {
+      color: #ff7452;
+      margin-right: 10px;
+    }
+
+    p, h3 {
+      margin: 0;
+    }
+  }
+}
+
 </style>
