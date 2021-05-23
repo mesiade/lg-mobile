@@ -1,29 +1,38 @@
 <template>
   <div class="course-content-list">
-    <van-list
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
+
+    <!-- 下拉刷新组件 -->
+    <van-pull-refresh
+      v-model="isRefreshing"
+      @refresh="onRefresh"
     >
-      <van-cell
-        v-for="item in list"
-        :key="item.id">
-        <!-- 课程左侧图片 -->
-        <div>
-          <img :src="item.courseImgUrl" alt="">
-        </div>
-        <!-- 课程右侧信息 -->
-        <div class="course-info">
-          <h3 v-text="item.courseName"></h3>
-          <p class="curse-preview" v-html="item.previewFirstField"></p>
-          <p class="curse-container">
-            <span class="curse-discounts">￥{{ item.discounts }}</span>
-            <s class="curse-price">￥{{ item.price }}</s>
-          </p>
-        </div>
-      </van-cell>
-    </van-list>
+    <!-- 列表组件 -->
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <van-cell
+          v-for="item in list"
+          :key="item.id">
+          <!-- 课程左侧图片 -->
+          <div>
+            <img :src="item.courseImgUrl" alt="">
+          </div>
+          <!-- 课程右侧信息 -->
+          <div class="course-info">
+            <h3 v-text="item.courseName"></h3>
+            <p class="curse-preview" v-html="item.previewFirstField"></p>
+            <p class="curse-container">
+              <span class="curse-discounts">￥{{ item.discounts }}</span>
+              <s class="curse-price">￥{{ item.price }}</s>
+            </p>
+          </div>
+        </van-cell>
+      </van-list>
+    </van-pull-refresh>
+
   </div>
 </template>
 
@@ -40,10 +49,30 @@ export default {
       // 是否加载完毕
       finished: false,
       // 数据页数
-      currentPage: 1
+      currentPage: 1,
+      // 下拉刷新状态
+      isRefreshing: false
     }
   },
   methods: {
+    async onRefresh () {
+      // 还原数据页数
+      this.currentPage = 1
+      // 重新请求数据
+      const { data } = await getQueryCourses({
+        currentPage: this.currentPage,
+        pageSize: 10,
+        status: 1
+      })
+      // 下拉刷新，需要清除所有数据，直接复制给this.list
+      if (data.data && data.data.records && data.data.records.length !== 0) {
+        this.list = data.data.records
+      }
+      // 提示
+      this.$toast('刷新成功')
+      // 关闭下拉提示框
+      this.isRefreshing = false
+    },
     async onLoad () {
       const { data } = await getQueryCourses({
         currentPage: this.currentPage,
@@ -51,7 +80,10 @@ export default {
         // 代表上架状态
         status: 1
       })
-      this.list.push(...data.data.records)
+
+      if (data.data && data.data.records && data.data.records.length !== 0) {
+        this.list.push(...data.data.records)
+      }
       // 下次请求下一页
       this.currentPage++
       // 加载状态结束
