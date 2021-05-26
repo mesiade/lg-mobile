@@ -7,12 +7,14 @@
       </van-swipe-item>
     </van-swipe>
     <!-- 课程列表 -->
-    <course-content-list></course-content-list>
+    <course-content-list
+      :fetch-data="fetchData"
+    ></course-content-list>
   </div>
 </template>
 
 <script>
-import { getAllAds } from '@/services/course'
+import { getAllAds, getQueryCourses } from '@/services/course'
 import CourseContentList from '@/components/CourseContentList'
 
 export default {
@@ -28,8 +30,12 @@ export default {
   },
   created () {
     this.loadAds()
+    this.fetchData = getQueryCourses
   },
   methods: {
+    // fetchData (options) {
+    //   return getQueryCourses(options)
+    // },
     async loadAds () {
       const { data } = await getAllAds({
         // 999代表首页顶部轮播图广告位

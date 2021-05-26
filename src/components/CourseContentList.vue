@@ -18,13 +18,17 @@
           :key="item.id">
           <!-- 课程左侧图片 -->
           <div>
-            <img :src="item.courseImgUrl" alt="">
+            <img :src="item.courseImgUrl || item.image" alt="">
           </div>
           <!-- 课程右侧信息 -->
           <div class="course-info">
-            <h3 v-text="item.courseName"></h3>
+            <h3 v-text="item.courseName || item.name"></h3>
             <p class="curse-preview" v-html="item.previewFirstField"></p>
-            <p class="curse-container">
+            <!-- 如果为已购课程，无需显示价格区域 -->
+            <p
+              v-if="item.price"
+              class="curse-container"
+            >
               <span class="curse-discounts">￥{{ item.discounts }}</span>
               <s class="curse-price">￥{{ item.price }}</s>
             </p>
@@ -37,10 +41,17 @@
 </template>
 
 <script>
-import { getQueryCourses } from '@/services/course'
+// import { getQueryCourses } from '@/services/course'
 
 export default {
   name: 'CourseContentList',
+  props: {
+    // 用于请求数据的函数
+    fetchData: {
+      type: Function,
+      required: true
+    }
+  },
   data () {
     return {
       list: [],
@@ -59,7 +70,7 @@ export default {
       // 还原数据页数
       this.currentPage = 1
       // 重新请求数据
-      const { data } = await getQueryCourses({
+      const { data } = await this.fetchData({
         currentPage: this.currentPage,
         pageSize: 10,
         status: 1
@@ -67,6 +78,8 @@ export default {
       // 下拉刷新，需要清除所有数据，直接复制给this.list
       if (data.data && data.data.records && data.data.records.length !== 0) {
         this.list = data.data.records
+      } else if (data.content && data.content.length !== 0) {
+        this.list = data.content
       }
       // 提示
       this.$toast('刷新成功')
@@ -74,7 +87,7 @@ export default {
       this.isRefreshing = false
     },
     async onLoad () {
-      const { data } = await getQueryCourses({
+      const { data } = await this.fetchData({
         currentPage: this.currentPage,
         pageSize: 10,
         // 代表上架状态
@@ -83,6 +96,8 @@ export default {
 
       if (data.data && data.data.records && data.data.records.length !== 0) {
         this.list.push(...data.data.records)
+      } else if (data.content && data.content.length !== 0) {
+        this.list.push(...data.content)
       }
       // 下次请求下一页
       this.currentPage++
@@ -90,7 +105,9 @@ export default {
       this.loading = false
 
       // 数据全部加载完成
-      if (data.data.records.length < 10) {
+      if (data.data && data.data.records && data.data.records.length < 10) {
+        this.finished = true
+      } else if (data.content && data.content.length < 10) {
         this.finished = true
       }
     }
