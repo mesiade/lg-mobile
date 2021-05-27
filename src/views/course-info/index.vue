@@ -28,7 +28,13 @@
             <!-- 课程详情信息在后台是通过富文本编辑器设置的，所以内容为HTML文本 -->
             <div v-html="course.courseDescription"></div>
           </van-tab>
-          <van-tab title="内容">内容 2</van-tab>
+          <van-tab title="内容">
+            <course-section
+              v-for="item in sections"
+              :key="item.id"
+              :section-data="item"
+            />
+          </van-tab>
         </van-tabs>
       </van-cell>
     </van-cell-group>
@@ -36,9 +42,13 @@
 </template>
 
 <script>
-import { getCourseById } from '@/services/course'
+import CourseSection from './components/CourseSection'
+import { getCourseById, getSectionAndLesson } from '@/services/course'
 export default {
   name: 'CourseInfo',
+  components: {
+    CourseSection
+  },
   props: {
     courseId: {
       type: [String, Number],
@@ -48,11 +58,14 @@ export default {
   data () {
     return {
       // 课程信息
-      course: {}
+      course: {},
+      // 课程章节信息
+      sections: {}
     }
   },
   created () {
     this.loadCourse()
+    this.loadSections()
   },
   methods: {
     async loadCourse () {
@@ -60,6 +73,12 @@ export default {
         courseId: this.courseId
       })
       this.course = data.content
+    },
+    async loadSections () {
+      const { data } = await getSectionAndLesson({
+        courseId: this.courseId
+      })
+      this.sections = data.content.courseSectionList
     }
   }
 }
