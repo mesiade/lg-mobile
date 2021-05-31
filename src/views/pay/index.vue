@@ -21,7 +21,7 @@
             <van-cell-group>
               <van-cell @click="radio = '1'">
                 <template #title>
-                  <img src="" alt="">
+                  <img src="http://www.lgstatic.com/lg-app-fed/pay/images/wechat_b787e2f4.png" alt="">
                   <span>微信支付</span>
                 </template>
                 <template #right-icon>
@@ -30,7 +30,7 @@
               </van-cell>
               <van-cell @click="radio = '2'">
                 <template #title>
-                  <img src="" alt="">
+                  <img src="http://www.lgstatic.com/lg-app-fed/pay/images/ali_ed78fdae.png" alt="">
                   <span>支付宝支付</span>
                 </template>
                 <template #right-icon>
@@ -47,10 +47,18 @@
 </template>
 
 <script>
+import { cell, cellGroup, button, radio, radioGroup } from 'vant'
 import { createOrder, initPayment, getPayResult } from '@/services/pay'
 import { getCourseById } from '@/services/course'
 export default {
   name: 'Pay',
+  components: {
+    VanCell: cell,
+    VanCellGroup: cellGroup,
+    VanButton: button,
+    VanRadio: radio,
+    VanRadioGroup: radioGroup
+  },
   props: {
     courseId: {
       type: [String, Number],

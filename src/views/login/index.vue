@@ -57,10 +57,17 @@
 </template>
 
 <script>
+import { navBar, form, field, button } from 'vant'
 import { login } from '@/services/user'
 
 export default {
   name: 'Login',
+  components: {
+    VanNavBar: navBar,
+    VanForm: form,
+    VanField: field,
+    VanButton: button
+  },
   data () {
     return {
       form: {

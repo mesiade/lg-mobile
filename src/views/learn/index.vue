@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { navBar } from 'vant'
 import LayoutFooter from '@/components/LayoutFooter'
 import CourseContentList from '@/components/CourseContentList'
 import { getPurchaseCourse } from '@/services/course'
@@ -19,7 +20,8 @@ export default {
   name: 'Learn',
   components: {
     LayoutFooter,
-    CourseContentList
+    CourseContentList,
+    VanNavBar: navBar
   },
   methods: {
     fetchData () {
