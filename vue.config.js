@@ -15,5 +15,11 @@ module.exports = {
         bypassOnDebug: true
       })
       .end()
+  },
+  configureWebpack: {
+    externals: {
+      vue: 'Vue',
+      vant: 'vant'
+    }
   }
 }
